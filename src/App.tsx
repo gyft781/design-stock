@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { DesignItem } from "./types/designItem";
 
 const designItems: DesignItem[] = [
@@ -19,13 +20,46 @@ const designItems: DesignItem[] = [
   },
 ];
 
+const categories = ["Layout", "Typography", "Interaction"];
+
 function App() {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const filteredItems =
+    selectedCategories.length === 0
+      ? designItems
+      : designItems.filter((item) =>
+          selectedCategories.some((category) =>
+            item.categories.includes(category),
+          ),
+        );
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories((current) =>
+      current.includes(category)
+        ? current.filter((item) => item !== category)
+        : [...current, category],
+    );
+  };
+
   return (
     <main>
       <h1>Design Stock</h1>
 
+      <div>
+        {categories.map((category) => (
+          <button
+            key={category}
+            type="button"
+            onClick={() => toggleCategory(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
       <ul>
-        {designItems.map((item) => (
+        {filteredItems.map((item) => (
           <li key={item.id}>
             <h2>{item.title}</h2>
             <a href={item.url} target="_blank" rel="noreferrer">
